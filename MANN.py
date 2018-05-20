@@ -30,7 +30,7 @@ class MANN(object):
         self.sess      = sess
         
         #load data
-        self.savepath  = savepath
+        self.savepath    = savepath
         self.input_data, self.output_data, self.input_size, self.output_size, self.size_data = loader.Load_Speed(datapath, savepath+'/data', num_joints, num_styles)
         self.hidden_size = hidden_size
         
@@ -39,14 +39,21 @@ class MANN(object):
         self.hidden_size_gt = hidden_size_gt
         self.feetJoints     = feetJoints
         
-        #traning hyper and adamWR
+        #training hyperpara
         self.batch_size    = batch_size
         self.epoch         = epoch
-        self.Te            = Te
-        self.Tmult         = Tmult
+        self.total_batch   = int(self.size_data / self.batch_size)
         
-        self.learning_rate_ini = learning_rate_ini
-        self.weightDecay_ini   = weightDecay_ini
+        #adamWR controllers
+        self.AP = AdamWParameter(nEpochs      = self.epoch,
+                                 Te           = Te,
+                                 Tmult        = Tmult,
+                                 LR           = learning_rate_ini, 
+                                 weightDecay  = weightDecay_ini,
+                                 batchSize    = self.batch_size,
+                                 nBatches     = self.total_batch
+                                 )
+        #keep_prob
         self.keep_prob_ini     = keep_prob_ini
         
         
@@ -110,20 +117,8 @@ class MANN(object):
         self.sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
         
-        #adamwr controller        
-        total_batch   = int(self.size_data / self.batch_size)
-        ap = AdamWParameter(nEpochs      = self.epoch, 
-                            Te           = self.Te,
-                            Tmult        = self.Tmult,
-                            LR           = self.learning_rate_ini, 
-                            weightDecay  = self.weightDecay_ini,
-                            batchSize    = self.batch_size,
-                            nBatches     = total_batch
-                            )
-        
         """training"""
-        #batch size and epoch
-        print("total_batch:", total_batch)
+        print("total_batch:", self.total_batch)
         #randomly select training set
         I = np.arange(self.size_data)
         self.rng.shuffle(I)
@@ -138,14 +133,14 @@ class MANN(object):
         print('Learning starts..')
         for epoch in range(self.epoch):
             avg_cost_train = 0
-            for i in range(total_batch):
+            for i in range(self.total_batch):
                 index_train = I[i*self.batch_size:(i+1)*self.batch_size]
                 batch_xs = self.input_data[index_train]
                 batch_ys = self.output_data[index_train]
-                clr, wdc = ap.getParameter(epoch)   #currentLearningRate & weightDecayCurrent
+                clr, wdc = self.AP.getParameter(epoch)   #currentLearningRate & weightDecayCurrent
                 feed_dict = {self.nn_X: batch_xs, self.nn_Y: batch_ys, self.nn_keep_prob: self.keep_prob_ini, self.nn_lr_c: clr, self.nn_wd_c: wdc}
                 l, _, = self.sess.run([self.loss, self.optimizer], feed_dict=feed_dict)
-                avg_cost_train += l / total_batch
+                avg_cost_train += l / self.total_batch
                 
                 if i % 1000 == 0:
                     print(i, "trainingloss:", l)
@@ -173,11 +168,11 @@ class MANN(object):
             if epoch>0 and epoch%10==0:
                 GT.save_GT((self.sess.run(self.gatingNN.w0), self.sess.run(self.gatingNN.w1), self.sess.run(self.gatingNN.w2)), 
                            (self.sess.run(self.gatingNN.b0), self.sess.run(self.gatingNN.b1), self.sess.run(self.gatingNN.b2)), 
-                           weights_path
+                           weights_path + '/nn%03i' % epoch
                            )
                 EW.save_EP((self.sess.run(self.layer0.alpha), self.sess.run(self.layer1.alpha), self.sess.run(self.layer2.alpha)),
                            (self.sess.run(self.layer0.beta), self.sess.run(self.layer1.beta), self.sess.run(self.layer2.beta)),
-                           weights_path,
+                           weights_path + '/nn%03i' % epoch,
                            self.num_experts
                            )
             print('Learning Finished')

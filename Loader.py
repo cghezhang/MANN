@@ -5,22 +5,13 @@ import numpy as np
 import tensorflow as tf
 import Utils as utils
 
-#global parameters
-
+"""global parameters"""
 offset_Begin  = 3 #skip first 3 dims
 offset_End    = 3 #ranslational offset and rotational offset
-
 num_trajPoints       = 12 #trajectory points
 num_trajUnit_noSpeed = 6  #trajectory units: Position X,Z; Direction X,Z; Velocity X,Z;           
 num_trajUnit_speed   = 7  #trajectory units: Position X,Z; Direction X,Z; Velocity X,Z; Speed
 num_jointUnit        = 12 #joint units: PositionXYZ Rotation VelocityXYZ
-
-"""
-#dog parameter
-num_joint_dog   = 27
-num_style_dog   = 6
-"""
-
 
 def Load_Speed(filename, savefile, num_joint, num_style):
     data = np.float32(np.loadtxt(filename))
@@ -36,13 +27,11 @@ def Load_Speed(filename, savefile, num_joint, num_style):
             C.append(data[i+2])
     A = np.asarray(A)
     B = np.asarray(B)
-    C = np.asarray(C)
-    
+    C = np.asarray(C)    
     
     jointNeurons      = num_jointUnit* num_joint     
     trajectoryUnit    = num_trajUnit_speed+ num_style
     trajectoryNeurons = trajectoryUnit* num_trajPoints 
-
 
     #input 
     X = np.concatenate(
@@ -50,8 +39,6 @@ def Load_Speed(filename, savefile, num_joint, num_style):
                     B[:,offset_Begin+jointNeurons:offset_Begin+jointNeurons+trajectoryNeurons], 
                     A[:,offset_Begin:offset_Begin+jointNeurons]
             ),axis = 1) 
-
-
 
     Traj_out = np.float32(np.zeros((A.shape[0],np.int(num_trajPoints/2* num_trajUnit_noSpeed))))
     Traj_out_start = np.int(offset_Begin+ jointNeurons+ num_trajPoints/2*trajectoryUnit)
