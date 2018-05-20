@@ -165,9 +165,9 @@ class MANN(object):
                        self.num_experts
                        )
             
-            if epoch>0 and epoch%10==0:
+            if epoch%10==0:
                 weights_nn_path = weights_path + '/nn%03i' % epoch
-                utils.build_path(weights_nn_path)
+                utils.build_path([weights_nn_path])
                 GT.save_GT((self.sess.run(self.gatingNN.w0), self.sess.run(self.gatingNN.w1), self.sess.run(self.gatingNN.w2)), 
                            (self.sess.run(self.gatingNN.b0), self.sess.run(self.gatingNN.b1), self.sess.run(self.gatingNN.b2)), 
                            weights_nn_path
