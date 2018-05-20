@@ -166,13 +166,15 @@ class MANN(object):
                        )
             
             if epoch>0 and epoch%10==0:
+                weights_nn_path = weights_path + '/nn%03i' % epoch
+                utils.build_path(weights_nn_path)
                 GT.save_GT((self.sess.run(self.gatingNN.w0), self.sess.run(self.gatingNN.w1), self.sess.run(self.gatingNN.w2)), 
                            (self.sess.run(self.gatingNN.b0), self.sess.run(self.gatingNN.b1), self.sess.run(self.gatingNN.b2)), 
-                           weights_path + '/nn%03i' % epoch
+                           weights_nn_path
                            )
                 EW.save_EP((self.sess.run(self.layer0.alpha), self.sess.run(self.layer1.alpha), self.sess.run(self.layer2.alpha)),
                            (self.sess.run(self.layer0.beta), self.sess.run(self.layer1.beta), self.sess.run(self.layer2.beta)),
-                           weights_path + '/nn%03i' % epoch,
+                           weights_nn_path,
                            self.num_experts
                            )
             print('Learning Finished')
