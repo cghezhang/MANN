@@ -177,4 +177,4 @@ class MANN(object):
                            weights_nn_path,
                            self.num_experts
                            )
-            print('Learning Finished')
+        print('Learning Finished')
