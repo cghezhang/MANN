@@ -6,7 +6,7 @@ from MANN import MANN
 num_joints  = 27
 num_styles  = 6
 datapath    = './data' 
-savepath    = './dog'
+savepath    = './training'
 num_experts = 8
 
 def main():
