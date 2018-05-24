@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-import Loader as loader
 import Gating as GT
 from Gating import Gating
 import ExpertWeights as EW
@@ -31,7 +30,12 @@ class MANN(object):
         
         #load data
         self.savepath    = savepath
-        self.input_data, self.output_data, self.input_size, self.output_size, self.size_data = loader.Load_Speed(datapath, savepath+'/data', num_joints, num_styles)
+        utils.build_path([savepath+'/normalization'])
+        self.input_data  = utils.Normalize(np.float32(np.loadtxt(datapath+'/Input.txt')), axis = 0, savefile=savepath+'/normalization/X')
+        self.output_data = utils.Normalize(np.float32(np.loadtxt(datapath+'/Output.txt')), axis = 0, savefile=savepath+'/normalization/Y')
+        self.input_size  = self.input_data.shape[1]
+        self.output_size = self.output_data.shape[1]
+        self.size_data   = self.input_data.shape[0]
         self.hidden_size = hidden_size
         
         #gatingNN
@@ -57,6 +61,8 @@ class MANN(object):
         self.keep_prob_ini     = keep_prob_ini
         
         
+        
+        
     def build_model(self):
         #Placeholders
         self.nn_X         = tf.placeholder(tf.float32, [self.batch_size, self.input_size],  name='nn_X') 
@@ -67,7 +73,7 @@ class MANN(object):
         
         """BUILD gatingNN"""
         #input of gatingNN
-        self.gating_input, self.input_size_gt = loader.getDogFeetsVSS(self.nn_X, self.feetJoints, self.num_styles)
+        self.gating_input, self.input_size_gt = GT.getInput(self.nn_X, self.feetJoints, self.num_styles)
         self.gating_input = tf.transpose(self.gating_input)
         self.gatingNN = Gating(self.rng, self.gating_input, self.input_size_gt, self.num_experts, self.hidden_size_gt, self.nn_keep_prob)
         #bleding coefficients

@@ -5,7 +5,7 @@ from MANN import MANN
 
 num_joints  = 27
 num_styles  = 6
-datapath    = './data/Data.txt' 
+datapath    = './data' 
 savepath    = './dog'
 num_experts = 8
 
