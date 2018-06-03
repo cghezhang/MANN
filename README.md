@@ -7,8 +7,8 @@ Paper: https://github.com/ShikamaruZhang/MANN/blob/master/paper/Paper.pdf
 
 <p>
 Data: download following two .txt files and put into data folder.<br />
-http://www.starke-consult.de/UoE/GitHub/Input.txt <br />
-http://www.starke-consult.de/UoE/GitHub/Output.txt <br />
+http://www.starke-consult.de/UoE/GitHub/SIGGRAPH_2018/Input <br />
+http://www.starke-consult.de/UoE/GitHub/SIGGRAPH_2018/Output <br />
 </p>
 
 Copyright Information
