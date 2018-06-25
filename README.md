@@ -2,7 +2,7 @@
 Mode-Adaptive Neural Networks for Quadruped Motion Control
 ------------
 <p>
-Paper: https://github.com/ShikamaruZhang/MANN/blob/master/paper/Paper.pdf
+Paper: http://homepages.inf.ed.ac.uk/tkomura/dog.pdf
 </p>
 
 <p>
