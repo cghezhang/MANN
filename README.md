@@ -6,9 +6,7 @@ Paper: http://homepages.inf.ed.ac.uk/tkomura/dog.pdf
 </p>
 
 <p>
-Data: download following two .txt files and put into data folder.<br />
-http://www.starke-consult.de/UoE/GitHub/SIGGRAPH_2018/Input <br />
-http://www.starke-consult.de/UoE/GitHub/SIGGRAPH_2018/Output <br />
+Full project: https://github.com/sebastianstarke/AI4Animation
 </p>
 
 Copyright Information
